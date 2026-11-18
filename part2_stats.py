@@ -8,13 +8,14 @@ noble=noble.set_index('Symbol')
 ratio=noble['MeltingPoint']/noble['BoilingPoint']
 #Helium does not have a melting point at 1 atm, so it is NaN.
 ratio=ratio.dropna() #drop helium
-print("ratios are:",ratio,"mean of ratios:",np.mean(ratio),"standard deviation of ratios:",np.std(ratio,ddof=1)) #we can see the ratios
+print("ratios are: \n",ratio,"mean of ratios:",np.mean(ratio),"standard deviation of ratios:",np.std(ratio,ddof=1)) #we can see the ratios
 n=len(ratio)
 mean = np.mean(ratio)
 sd = np.std(ratio, ddof=1)
 t = stats.t.ppf(0.975, n-1) #t value for 95% confidence interval with n-1=3 degrees of freedom
 half1 = t * sd / np.sqrt(n) #half-width of the confidence interval
 ci = (mean - half1, mean + half1)
+print("95% confidence interval of the mean:", ci)
 
 plt.figure(figsize=(5, 4))
 plt.axhspan(mean - sd, mean + sd, color="grey", alpha=0.2, label="mean ± 1 SD")
@@ -32,7 +33,7 @@ ratio2= ratio.drop("Ne")
 mean2 = np.mean(ratio2)
 sd2 = np.std(ratio2, ddof=1)
 n2=len(ratio2)
-t2 = stats.t.ppf(0.975,n2) #t value for 95% prediction interval with n-1=2 degrees of freedom
+t2 = stats.t.ppf(0.975,n2-1) #t value for 95% prediction interval with n-1=2 degrees of freedom
 half2 = t2 * sd2 * np.sqrt(1 + 1/len(ratio2)) #Prediction interval formula. It accounts for the uncertainty in the mean AND the variability of individual observations.
 pi = (mean2 - half2, mean2 + half2)
 print("95% prediction interval:", pi)
@@ -43,4 +44,3 @@ if ne < low or ne > high:
 else:
     print("Ne =", round(ne, 4), "-> INSIDE the interval, so no evidence Ne is an outlier")
 
-    
